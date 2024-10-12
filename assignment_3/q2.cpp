@@ -1,67 +1,116 @@
 #include <iostream>
-
 using namespace std;
 
-bool isFull(char seatChar[7][5]);
-void checkSeat(char seatChar[7][5],int row,char seat);
-void printSeats(char seatChart[7][5]);
+void reserveSeats();
+// Void function reserves a seat on an airline and has no input arguments.
+// It establises a 2D char array that can change the values to incidcate a seats availability.
 
-int main() {
-	char seatChart[7][5] = {{'1','A','B','C','D'},
-				{'2','A','B','C','D'},
-				{'3','A','B','C','D'},
-				{'4','A','B','C','D'},
-				{'5','A','B','C','D'},
-				{'6','A','B','C','D'},
-				{'7','A','B','C','D'}}; 
-	int row = 0;
-	char seat = ' ',
-	     enterAgain = 'N';	
+int main() 
+{
+    // Calls the void function to reserve a seat on an airline.
+    reserveSeats();
 
-	do {
-		printSeats(seatChart);
-		cout << "Enter row number:";
-		cin  >> row;
-		while (row < 1 || row > 7) {
-			cout << "Enter a value between 1 and 7:";
-			cin  >> row;
-		}
-		cout << "Enter seat letter:";
-		cin  >> seat;
-		// Use ASCII values for A - D to validate input
-		while (seat < 'A' || seat > 'D') {
-			cout << "Enter A, B, C, or D:";
-			cin  >> seat;
-		}
-
-		checkSeat(seatChart,row,seat);
-		cout << "\nWould you like to book another seat?" << endl
-		     << "Enter Y for yes and anything else to quit:";
-		cin  >> enterAgain;
-	} while(enterAgain == 'Y' && !(isFull(seatChart)));
- 
-	if (isFull(seatChart))
-		cout << "Sorry, there are no more empty seats on this plane." << endl;
- 
-	return 0;
+    return 0; 
 }
 
-bool isFull(char seatChar[7][5]) {
-	for (int i = 0; i < 7; i++) {
-		for (int j = 1; j < 4; j++) {
-			if (seatChar[i][j] != 'X')
-				return false;
-		}
-	}
-	return true;
-}
+// Function definition for the void function reserveSeats
+void reserveSeats()
+{
+    // Variable declarations and initialization
+    string userString = "yes"; // do-while loop conditional statement
+    int availableSeats = 28; // Number of seats on the plane
+    char rowNumber, seatLetter; // User seat selection
 
-void checkSeat(char seatChart[7][5], int row, char seat) {
-	int i = 0;
+    // Defines the 2D character array
+    char seatingChart[7][5] = { {'1', 'A', 'B', 'C', 'D'}, 
+                                {'2', 'A', 'B', 'C', 'D'}, 
+                                {'3', 'A', 'B', 'C', 'D'}, 
+                                {'4', 'A', 'B', 'C', 'D'}, 
+                                {'5', 'A', 'B', 'C', 'D'},
+                                {'6', 'A', 'B', 'C', 'D'}, 
+                                {'7', 'A', 'B', 'C', 'D'}};
 
-}
+    // Will continue to reserve a seat until user quits or all seats are reserved
+    do 
+    {
+        cout << "Available seats: " << endl;
+        
+        // Nested for loop will display all elements of the seating array
+        for (int i = 0; i < 7; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                cout << seatingChart[i][j] << " ";
+            }
 
-void printSeats(char seatChart[7][5]) {
-	cout << "AVAILABLE SEATS:" << endl;
-	
+            // New line for the new row
+            cout << "\n";
+        }
+
+        cout << "\n";
+
+        // Prompts the user to select a seat
+        cout << "To reserve an available seat enter a row number and seat letter separated by a space: ";
+        cin >> rowNumber >> seatLetter;
+        cout << "\n";
+
+        // Prompts the user to enter a valid seat ID
+        // ASCII table was used to determine conditional statement parameters
+        while (!((rowNumber > 48 ) && (rowNumber < 56)) || !((seatLetter > '@') && (seatLetter < 'E')))
+        {
+            cout << "Selected seat does not exist.\n";
+            cout << "Please enter a valid row number and seat letter separated by a space: ";
+            cin >> rowNumber >> seatLetter;
+            cout << "\n";
+        }
+
+        // Prompts the user to enter a seat that isn't already reserved
+        // ASCII table and type casting was used to convert the seat ID in the array to an index
+        while (seatingChart[static_cast<int>(rowNumber - 49)][static_cast<int>(seatLetter - 64)] == 'X')
+        {
+            cout << "The selected seat is already reserved. Please select another." << endl;
+            cout << "Please enter a valid row number and seat letter separated by a space: ";
+            cin >> rowNumber >> seatLetter;
+            cout << "\n";
+        }
+
+        // Edits the seating array to reserve a seat
+        seatingChart[static_cast<int>(rowNumber - 49)][static_cast<int>(seatLetter - 64)] = 'X';
+
+        // Displays message confirming the seat reservation.
+        cout << "Your seat " << rowNumber << seatLetter << " has been reserved.\n" << endl;
+
+        // Edits the nummber of seats available to be reserved.
+        availableSeats -= 1; 
+
+        // Nested for loop will display all elements of the seating array updated with the reserved seats.
+        cout << "Available seats:\n";
+        for (int i = 0; i < 7; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                cout << seatingChart[i][j] << " ";
+            }
+
+            // New line for the new row
+            cout << "\n";
+        }
+
+        cout << "\n";
+
+        // Terminates the program if all seats have been reserved.
+        if (availableSeats == 0)
+        {
+            cout << "All seats have been reserved." << endl;
+            break;
+        }
+
+        // Prompts the user to make another reservation
+        cout << "Would you like to reserve another seat? Enter yes or Yes to continue or any other key to exit. ";
+        cin >> userString;
+        cout << "\n" << "\n";
+
+    } while ((userString == "yes") || (userString == "Yes"));
+
+    cout << "Program has been ended.\n" << endl;
 }
